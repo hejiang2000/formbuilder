@@ -75,6 +75,7 @@ const LinkToHome = () => {
 export default (
     <Route path="/" component={App}>
       <IndexRoute components={{...common, mainComponent: WelcomeContainer}} />
+      <Route path="login/:id" components={{...common, mainComponent: LoginContainer}} />
       <Route path="faq"
         components={{...common, sidebarComponent: LinkToBuilder, content: FAQ}} />
       <Route path="builder"

@@ -210,3 +210,42 @@ The UserForm is what the people that will fill the form will see.
   <UserForm>
 </App>
 ```
+
+### Development
+
+###### create acount:admin
+kinto create-user --ini ~/config/kinto.ini --username admin --password admin
+echo '{"data": {"password": "hejiang"}}' | http PUT http://localhost:8888/v1/accounts/hejiang --verbose
+
+###### login (account authentication)
+http GET http://localhost:8888/v1/ --auth admin:admin --verbose
+
+###### create bucket
+echo '{"permissions": {"collection:create": ["system.Authenticated"]}}' | http PUT http://localhost:8888/v1/buckets/formuser --auth admin:admin --verbose
+echo '{"permissions": {"collection:create": ["system.Authenticated"]}}' | http PUT http://localhost:8888/v1/buckets/formbuilder --auth admin:admin --verbose
+
+###### retrieve all buckets
+http GET http://localhost:8888/v1/buckets --auth admin:admin --verbose
+http GET http://localhost:8888/v1/buckets/formuser --auth admin:admin --verbose
+http GET http://localhost:8888/v1/buckets/formbuilder --auth admin:admin --verbose
+
+###### create formuser collection
+echo '{"data":{"description":"form user information"}}' | http PUT http://localhost:8888/v1/buckets/formuser/collections/account-admin --auth admin:admin --verbose
+
+echo '{"permissions":{"read":["system.Authenticated"]}}' | http PUT http://localhost:8888/v1/buckets/formuser/collections/account-hejiang --auth hejiang:hejiang --verbose
+
+###### create formuser record
+echo '{"data":{"title":"my login form"},"permissions":{"read":["system.Everyone"]}}' | http PUT http://localhost:8888/v1/buckets/formuser/collections/account-admin/records/d996f988-d15d-4011-b612-aa71500aadca --auth admin:admin --verbose
+
+###### retrieve formuser records
+http GET http://localhost:8888/v1/buckets/formuser/collections/account-admin/records --auth hejiang:hejiang --verbose
+
+
+###### create formbuilder collection
+echo '{"data":{"title":"my login form"},"permissions":{"read":["system.Everyone"],"record:create":["system.Everyone"]}}' | http PUT http://localhost:8888/v1/buckets/formbuilder/collections/d996f988-d15d-4011-b612-aa71500aadca --auth admin:admin --verbose
+
+###### create formbuilder record
+echo '{"data":{"hello":"world"}}' | http POST http://localhost:8888/v1/buckets/formbuilder/collections/d996f988-d15d-4011-b612-aa71500aadca/records --auth d996f988-d15d-4011-b612-aa71500aadca:d996f988-d15d-4011-b612-aa71500aadca --verbose
+
+###### retrieve formbuild records
+http GET http://localhost:8888/v1/buckets/formbuilder/collections/d996f988-d15d-4011-b612-aa71500aadca/records --verbose
