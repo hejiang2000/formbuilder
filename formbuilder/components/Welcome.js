@@ -4,7 +4,7 @@ import React from "react";
 export default function Welcome(props) {
   const createNewForm = () => {
     props.resetForm(() => {
-      props.history.pushState(null, "/builder");
+      props.history.pushState(null, "/account/login");
     });
   };
 

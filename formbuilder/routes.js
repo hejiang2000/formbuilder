@@ -11,6 +11,7 @@ import UserFormContainer from "./containers/UserFormContainer";
 import RecordCreatedContainer from "./containers/RecordCreatedContainer";
 import AdminViewContainer from "./containers/AdminViewContainer";
 import WelcomeContainer from "./containers/WelcomeContainer";
+import LoginContainer from "./containers/LoginContainer";
 import JsonSchemaDownloaderContainer from "./containers/builder/JsonSchemaDownloaderContainer";
 import Header from "./components/Header";
 import Check from "./components/Check";
@@ -75,7 +76,7 @@ const LinkToHome = () => {
 export default (
     <Route path="/" component={App}>
       <IndexRoute components={{...common, mainComponent: WelcomeContainer}} />
-      <Route path="login/:id" components={{...common, mainComponent: LoginContainer}} />
+      <Route path="account/login" components={{...common, content: LoginContainer}} />
       <Route path="faq"
         components={{...common, sidebarComponent: LinkToBuilder, content: FAQ}} />
       <Route path="builder"

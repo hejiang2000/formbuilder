@@ -2,7 +2,7 @@ import KintoClient from "kinto-http";
 import btoa from "btoa";
 import uuid from "uuid";
 
-import {addNotification} from "./notifications";
+import { addNotification } from "./notifications";
 import config from "../config";
 
 
@@ -24,51 +24,54 @@ export const RECORDS_RETRIEVAL_DONE = "RECORDS_RETRIEVAL_DONE";
 const CONNECTIVITY_ISSUES = "This is usually due to an unresponsive server or some connectivity issues.";
 
 function connectivityIssues(dispatch, message) {
-  const msg = message +  " " + CONNECTIVITY_ISSUES;
-  dispatch(addNotification(msg, {type: "error"}));
+  const msg = message + " " + CONNECTIVITY_ISSUES;
+  dispatch(addNotification(msg, { type: "error" }));
 }
 
 /**
  * Return HTTP authentication headers from a given pair of username and password.
  **/
 function getAuthenticationHeaders(username, password) {
-  return {Authorization: "Basic " + btoa(`${username}:${password}`)};
+  return { Authorization: "Basic " + btoa(`${username}:${password}`) };
 }
 
 /**
  * login and give the credentials to the callback function
  * when it's done.
  **/
-export function accountLogin(callback) {
-  const thunk =  (dispatch, getState, retry = true) => {
+export function accountLogin(formData, callback) {
+  const thunk = (dispatch, getState, retry = true) => {
 
-    const form = getState().form;
-    const formData = form.formData;
-
-    const url = config.server.remote + "/account";
+    const url = config.server.remote;
     const authHeaders = getAuthenticationHeaders(formData.username, formData.password);
 
-    dispatch({type: ACCOUNT_LOGIN_PENDING});
+    dispatch({ type: ACCOUNT_LOGIN_PENDING });
+    fetch(url, { method: "GET", headers: authHeaders })
+      .then((response) => {
+        response.json().then(data => {
+          if (data.user && data.user.id && data.user.id.startsWith('account:')) {
+            dispatch({
+              type: ACCOUNT_LOGIN_DONE,
+              authHeaders,
+            });
 
-    fetch(url, authHeaders)
-    .then(({data})=> {
-      dispatch({
-        type: ACCOUNT_LOGIN_DONE,
-        authHeaders,
+            if (callback) {
+              callback(formData);
+            }
+          } else {
+            connectivityIssues(dispatch, "无效的用户名或密码.");
+            dispatch({ type: ACCOUNT_LOGIN_FAILED });
+          }
+        })
+      })
+      .catch((error) => {
+        if (error.response === undefined) {
+          throw error;
+        }
+
+        connectivityIssues(dispatch, "We were unable to publish your form.");
+        dispatch({ type: ACCOUNT_LOGIN_FAILED });
       });
-      if (callback) {
-        callback(formData);
-      }
-    })
-    .catch((error) => {
-      if (error.response === undefined) {
-        throw error;
-      }
-
-      connectivityIssues(dispatch, "We were unable to publish your form.");
-      dispatch({type: ACCOUNT_LOGIN_FAILED});
-    });
-
   };
   return thunk;
 }
