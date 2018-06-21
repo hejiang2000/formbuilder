@@ -2,7 +2,7 @@ import uuid from "uuid";
 
 export const NOTIFICATION_ADD = "NOTIFICATION_ADD";
 export const NOTIFICATION_REMOVE = "NOTIFICATION_REMOVE";
-
+export const NOTIFICATION_REMOVE_ALL = "NOTIFICATION_REMOVE_ALL";
 
 export function addNotification(message, options) {
   const defaultOptions = {
@@ -31,3 +31,8 @@ export function addNotification(message, options) {
 export function removeNotification(id) {
   return {type: NOTIFICATION_REMOVE, id};
 }
+
+export function removeAllNotifications() {
+  return {type: NOTIFICATION_REMOVE_ALL};
+}
+

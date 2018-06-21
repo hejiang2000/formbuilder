@@ -9,7 +9,7 @@ const schema = {
   required: ["username", "password"],
   properties: {
     username: { type: "string", title: "用户名" },
-    password: { type: "string", title: "密码"   }
+    password: { type: "string", title: "密码" }
   }
 };
 
@@ -22,16 +22,22 @@ const uiSchema = {
 };
 
 export default class LoginForm extends Component {
+  componentDidMount() {
+    this.props.accountCheck(() => {
+      this.props.history.pushState(null, "/builder");
+    });
+  }
+
   render() {
     const origin = window.location.origin + window.location.pathname;
     const onSubmit = ({ formData }) => {
-      this.props.accountLogin(formData, ()=>{
+      this.props.accountLogin(formData, () => {
         this.props.history.pushState(null, "/builder");
       });
     };
     return (<div className="narrow">
       <Form schema={schema} uiSchema={uiSchema} onSubmit={onSubmit} />
-      <p className="small">This form was created with the <a href={origin}>{config.projectName}</a>.</p>
+      <p className="small">本表单由 <a href={origin}>{config.projectName}</a> 提供技术支持</p>
     </div>
     );
   }

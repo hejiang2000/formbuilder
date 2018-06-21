@@ -6,7 +6,7 @@ import {
 
 const INITIAL_STATE = {
   status: "init",
-  authHeader: null,
+  authHeaders: null,
 };
 
 export default function accountStatus(state = INITIAL_STATE, action) {

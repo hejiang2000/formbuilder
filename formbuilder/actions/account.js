@@ -1,7 +1,3 @@
-import KintoClient from "kinto-http";
-import btoa from "btoa";
-import uuid from "uuid";
-
 import { addNotification } from "./notifications";
 import config from "../config";
 
@@ -21,11 +17,8 @@ export const SCHEMA_RETRIEVAL_DONE = "SCHEMA_RETRIEVAL_DONE";
 export const RECORDS_RETRIEVAL_PENDING = "RECORDS_RETRIEVAL_PENDING";
 export const RECORDS_RETRIEVAL_DONE = "RECORDS_RETRIEVAL_DONE";
 
-const CONNECTIVITY_ISSUES = "This is usually due to an unresponsive server or some connectivity issues.";
-
 function connectivityIssues(dispatch, message) {
-  const msg = message + " " + CONNECTIVITY_ISSUES;
-  dispatch(addNotification(msg, { type: "error" }));
+  dispatch(addNotification(message, { type: "error" }));
 }
 
 /**
@@ -39,7 +32,7 @@ function getAuthenticationHeaders(username, password) {
  * login and give the credentials to the callback function
  * when it's done.
  **/
-export function accountLogin(formData, callback) {
+export function accountLogin(formData, success) {
   const thunk = (dispatch, getState, retry = true) => {
 
     const url = config.server.remote;
@@ -55,9 +48,7 @@ export function accountLogin(formData, callback) {
               authHeaders,
             });
 
-            if (callback) {
-              callback(formData);
-            }
+            success && success(formData);
           } else {
             connectivityIssues(dispatch, "无效的用户名或密码.");
             dispatch({ type: ACCOUNT_LOGIN_FAILED });
@@ -72,6 +63,17 @@ export function accountLogin(formData, callback) {
         connectivityIssues(dispatch, "We were unable to publish your form.");
         dispatch({ type: ACCOUNT_LOGIN_FAILED });
       });
+  };
+  return thunk;
+}
+
+export function accountCheck(success, failure) {
+  const thunk = (dispatch, getState, retry = true) => {
+    if (getState().accountStatus.authHeaders) {
+      success && success();
+    } else {
+      failure && failure();
+    }
   };
   return thunk;
 }

@@ -1,5 +1,5 @@
 export default {
-  projectName: process.env.PROJECT_NAME || "Formbuilder",
+  projectName: process.env.PROJECT_NAME || "壹采集",
   server: {
     remote: process.env.SERVER_URL,
     bucket: "formbuilder",
