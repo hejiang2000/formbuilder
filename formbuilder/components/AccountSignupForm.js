@@ -21,7 +21,7 @@ const uiSchema = {
   }
 };
 
-export default class LoginForm extends Component {
+export default class SignupForm extends Component {
   componentDidMount() {
     this.props.accountCheck(() => {
       this.props.history.pushState(null, "/builder");
@@ -31,7 +31,7 @@ export default class LoginForm extends Component {
   render() {
     const origin = window.location.origin + window.location.pathname;
     const onSubmit = ({ formData }) => {
-      this.props.accountLogin(formData, () => {
+      this.props.accountSignup(formData, () => {
         this.props.history.pushState(null, "/builder");
       });
     };
@@ -45,7 +45,9 @@ export default class LoginForm extends Component {
         </div>
         </div>
       </Form>
-      <p className="small" style={{ "margin-top": "2em" }}>本表单由 <a href={origin}>{config.projectName}</a> 提供技术支持</p>
+      <p className="small" style={{ "margin-top": "2em" }}>
+        本表单由 <a href={origin}>{config.projectName}</a> 提供技术支持
+      </p>
     </div>
     );
   }

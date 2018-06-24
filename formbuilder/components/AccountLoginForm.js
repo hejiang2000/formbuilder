@@ -42,7 +42,9 @@ export default class LoginForm extends Component {
           &nbsp;&nbsp;&nbsp;&nbsp;没有账号? 现在 <a href="#/account/signup"> 注册 </a>
         </div>
       </Form>
-      <p className="small" style={{ "margin-top": "2em" }}>本表单由 <a href={origin}>{config.projectName}</a> 提供技术支持</p>
+      <p className="small" style={{ "margin-top": "2em" }}>
+        本表单由 <a href={origin}>{config.projectName}</a> 提供技术支持
+      </p>
     </div>
     );
   }

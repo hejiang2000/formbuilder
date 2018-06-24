@@ -2,20 +2,14 @@ import { addNotification } from "./notifications";
 import config from "../config";
 
 
-export const ACCOUNT_LOGIN = "ACCOUNT_LOGIN";
-
 export const ACCOUNT_LOGIN_PENDING = "ACCOUNT_LOGIN_PENDING";
 export const ACCOUNT_LOGIN_DONE = "ACCOUNT_LOGIN_DONE";
 export const ACCOUNT_LOGIN_FAILED = "ACCOUNT_LOGIN_FAILED";
 
 export const ACCOUNT_CREATION_PENDING = "ACCOUNT_CREATION_PENDING";
 export const ACCOUNT_CREATION_DONE = "ACCOUNT_CREATION_DONE";
+export const ACCOUNT_CREATION_FAILED = "ACCOUNT_CREATION_FAILED";
 
-export const SCHEMA_RETRIEVAL_PENDING = "SCHEMA_RETRIEVAL_PENDING";
-export const SCHEMA_RETRIEVAL_DONE = "SCHEMA_RETRIEVAL_DONE";
-
-export const RECORDS_RETRIEVAL_PENDING = "RECORDS_RETRIEVAL_PENDING";
-export const RECORDS_RETRIEVAL_DONE = "RECORDS_RETRIEVAL_DONE";
 
 function connectivityIssues(dispatch, message) {
   dispatch(addNotification(message, { type: "error" }));
@@ -28,15 +22,60 @@ function getAuthenticationHeaders(username, password) {
   return { Authorization: "Basic " + btoa(`${username}:${password}`) };
 }
 
+function getAuthInfo(formData) {
+  const username = formData.email.trim().replace(/@/, '_at_').replace(/\./g, '_');
+  const password = formData.password.trim();
+  return { username, password };
+}
 /**
- * login and give the credentials to the callback function
+ * signup and give the credentials to the callback function
  * when it's done.
  **/
+export function accountSignup(formData, success) {
+  const thunk = (dispatch, getState, retry = true) => {
+
+    const url = config.server.remote + (config.server.remote.endsWith('/') ? "accounts" : "/accounts");
+    const { username, password } = getAuthInfo(formData);
+
+    const body = JSON.stringify({ data: { id: username, password } });
+    dispatch({ type: ACCOUNT_CREATION_PENDING });
+    fetch(url, {
+      method: "POST",
+      body,
+      headers: {
+        "Content-Type": "application/json;utf-8"
+      }
+    })
+      .then((response) => {
+        response.json().then(json => {
+          if (json.data.id && json.data.id === username) {
+            const authHeaders = getAuthenticationHeaders(username, password);
+            dispatch({ type: ACCOUNT_LOGIN_DONE, authHeaders });
+            success && success(formData);
+          } else {
+            connectivityIssues(dispatch, "无效的用户名或密码.");
+            dispatch({ type: ACCOUNT_CREATION_FAILED });
+          }
+        })
+      })
+      .catch((error) => {
+        if (error.response === undefined) {
+          throw error;
+        }
+
+        connectivityIssues(dispatch, "账号注册失败: 电子邮件已占用。");
+        dispatch({ type: ACCOUNT_CREATION_FAILED });
+      });
+  };
+  return thunk;
+}
+
 export function accountLogin(formData, success) {
   const thunk = (dispatch, getState, retry = true) => {
 
     const url = config.server.remote;
-    const authHeaders = getAuthenticationHeaders(formData.username, formData.password);
+    const { username, password } = getAuthInfo(formData);
+    const authHeaders = getAuthenticationHeaders(username, password);
 
     dispatch({ type: ACCOUNT_LOGIN_PENDING });
     fetch(url, { method: "GET", headers: authHeaders })

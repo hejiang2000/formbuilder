@@ -25,7 +25,7 @@ export default function Welcome(props) {
         <div className="row">
           <div className="col-md-4">
             <h3><i className="glyphicon glyphicon-book"></i> 标准表单格式</h3>
-            <p>我们使用标准 <a href="http://json-schema.org/">json-schema</a> 格式储存表单。
+            <p>我们使用标准<a href="http://json-schema.org/"> json-schema </a>格式储存表单。
               该格式已被 IETF 发布为 Internet 标准草案:</p>
             <ul>
               <li><a href="https://datatracker.ietf.org/doc/draft-handrews-json-schema/" target="_blank">JSON Schema (core)</a></li>
@@ -42,7 +42,7 @@ export default function Welcome(props) {
           <div className="col-md-4">
             <h3><i className="glyphicon glyphicon-eye-close"></i> 私密数据保护</h3>
             <p>您可以在这里进行表单设计，嵌入到您的应用中并使用开源表单引擎
-              <a href="https://github.com/mozilla-services/react-jsonschema-form">react-jsonschema-form</a>
+              <a href="https://github.com/mozilla-services/react-jsonschema-form"> react-jsonschema-form </a>
               进行渲染。没有任何数据上传到我们或第三方服务器！</p>
           </div>
         </div>
