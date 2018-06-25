@@ -89,7 +89,7 @@ export default (
       <Route path="account/login" components={{...common, content: LoginContainer}} />
       <Route path="account/signup" components={{...common, content: SignupContainer}} />
 
-      <Route path="user/:id" components={{...common, content: UserHomeContainer}} />
+      <Route path="user/:id" components={{...common, content: HomeContainer}} />
 
       <Route path="faq"
         components={{...common, sidebarComponent: LinkToBuilder, content: FAQ}} />
