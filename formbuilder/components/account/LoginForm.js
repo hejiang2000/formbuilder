@@ -1,10 +1,9 @@
 import React, { Component } from "react";
 import Form from "react-jsonschema-form";
-import config from "../config";
-import UserForm from "./UserForm";
+import config from "../../config";
 
 const schema = {
-  title: "用户注册",
+  title: "用户登录",
   type: "object",
   required: ["email", "password"],
   properties: {
@@ -21,7 +20,7 @@ const uiSchema = {
   }
 };
 
-export default class SignupForm extends Component {
+export default class LoginForm extends Component {
   componentDidMount() {
     this.props.accountCheck(() => {
       this.props.history.pushState(null, "/builder");
@@ -31,7 +30,7 @@ export default class SignupForm extends Component {
   render() {
     const origin = window.location.origin + window.location.pathname;
     const onSubmit = ({ formData }) => {
-      this.props.accountSignup(formData, () => {
+      this.props.accountLogin(formData, () => {
         this.props.history.pushState(null, "/builder");
       });
     };
@@ -39,10 +38,8 @@ export default class SignupForm extends Component {
     return (<div className="narrow">
       <Form schema={schema} uiSchema={uiSchema} onSubmit={onSubmit}>
         <div>
-        <div>
-          <button type="submit" className="btn btn-primary">注册</button>
-          &nbsp;&nbsp;&nbsp;&nbsp;已有账号? 现在 <a href="#/account/login"> 登录 </a>
-        </div>
+          <button type="submit" className="btn btn-primary">登录</button>
+          &nbsp;&nbsp;&nbsp;&nbsp;没有账号? 现在 <a href="#/account/signup"> 注册 </a>
         </div>
       </Form>
       <p className="small" style={{ "margin-top": "2em" }}>

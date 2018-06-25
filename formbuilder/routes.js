@@ -11,10 +11,15 @@ import UserFormContainer from "./containers/UserFormContainer";
 import RecordCreatedContainer from "./containers/RecordCreatedContainer";
 import AdminViewContainer from "./containers/AdminViewContainer";
 
+// 欢迎页面 Container
 import WelcomeContainer from "./containers/WelcomeContainer";
 
-import LoginContainer from "./containers/AccountLoginContainer";
-import SignupContainer from "./containers/AccountSignupContainer";
+// 账号页面 Container
+import LoginContainer from "./containers/account/LoginContainer";
+import SignupContainer from "./containers/account/SignupContainer";
+
+// 用户页面 Container
+import HomeContainer from "./containers/user/HomeContainer";
 
 import JsonSchemaDownloaderContainer from "./containers/builder/JsonSchemaDownloaderContainer";
 import Header from "./components/Header";
@@ -83,6 +88,8 @@ export default (
 
       <Route path="account/login" components={{...common, content: LoginContainer}} />
       <Route path="account/signup" components={{...common, content: SignupContainer}} />
+
+      <Route path="user/:id" components={{...common, content: UserHomeContainer}} />
 
       <Route path="faq"
         components={{...common, sidebarComponent: LinkToBuilder, content: FAQ}} />
