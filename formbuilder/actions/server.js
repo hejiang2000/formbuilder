@@ -41,8 +41,8 @@ function getAuthenticationHeaders(token) {
  *
  * - All authenticated users can create new collections
  * - The credentials used to create this bucket aren't useful anymore after
- *   this function as the user is removed from the permissions.
- **/
+ * - this function as the user is removed from the permissions.
+ **
 function initializeBucket() {
   const api = new KintoClient(
     config.server.remote,
@@ -63,16 +63,18 @@ function initializeBucket() {
     console.debug("Skipping bucket creation, it probably already exist.");
   });
 }
+*/
 
 /**
- * Publishes a new form and give the credentials to the callback function
- * when it's done.
+ * - Publishes a new form and give the credentials to the callback function
+ * - when it's done.
  *
- * In case a 403 is retrieved, initialisation of the bucket is triggered.
+ * - In case a 403 is retrieved, initialisation of the bucket is triggered.
  **/
 export function publishForm(callback) {
   const thunk =  (dispatch, getState, retry = true) => {
 
+    const authHeaders = getState().accountStatus.authHeaders;
     const form = getState().form;
     const schema = form.schema;
     const uiSchema = form.uiSchema;
@@ -83,13 +85,12 @@ export function publishForm(callback) {
     }
 
     dispatch({type: FORM_PUBLICATION_PENDING});
-    const adminToken = uuid.v4().replace(/-/g, "");
-    const formID = getFormID(adminToken);
+    const formID = uuid.v4().replace(/-/g, "");
 
     // Create a client authenticated as the admin.
     const bucket = new KintoClient(
       config.server.remote,
-      {headers: getAuthenticationHeaders(adminToken)}
+      {headers: authHeaders}
     ).bucket(config.server.bucket);
 
     // The name of the collection is the user token so the user deals with
@@ -117,11 +118,13 @@ export function publishForm(callback) {
         throw error;
       }
       // If the bucket doesn't exist, try to create it.
+      /*
       if (error.response.status === 403 && retry === true) {
         return initializeBucket().then(() => {
           thunk(dispatch, getState, false);
         });
       }
+      */
       connectivityIssues(dispatch, "We were unable to publish your form.");
       dispatch({type: FORM_PUBLICATION_FAILED});
     });
@@ -137,11 +140,16 @@ export function submitRecord(record, collection, callback) {
   return (dispatch, getState) => {
     dispatch({type: FORM_RECORD_CREATION_PENDING});
 
+    let authHeaders = getState().accountStatus.authHeaders;
+    if (authHeaders == null) {
+      authHeaders = getAuthenticationHeaders(uuid.v4());
+    }
+
     // Submit all form answers under a different users.
     // Later-on, we could persist these userid to let users change their
     // answers (but we're not quite there yet).
     new KintoClient(config.server.remote, {
-      headers: getAuthenticationHeaders(uuid.v4())
+      headers: authHeaders
     })
     .bucket(config.server.bucket)
     .collection(collection)
